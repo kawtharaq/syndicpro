@@ -89,38 +89,40 @@ class ChargeController extends Controller
     }
 
     public function generer(Request $request)
-    {
-        $request->validate([
-            'mois'    => 'required|date',
-            'montant' => 'required|numeric|min:0',
-        ]);
+{
+    $request->validate([
+        'mois'    => 'required|date',
+        'montant' => 'nullable|numeric|min:0',
+    ]);
 
-        $mois         = Carbon::parse($request->mois)->startOfMonth();
-        $appartements = Appartement::where('statut', 'occupé')->get();
-        $count        = 0;
+    $mois         = Carbon::parse($request->mois)->startOfMonth();
+    $appartements = Appartement::where('statut', 'occupé')->get();
+    $count        = 0;
 
-        foreach ($appartements as $appart) {
-            // Vérifier si charge déjà générée pour ce mois
-            $existe = Charge::where('appartement_id', $appart->id)
-                            ->whereYear('mois', $mois->year)
-                            ->whereMonth('mois', $mois->month)
-                            ->exists();
+    foreach ($appartements as $appart) {
+        $existe = Charge::where('appartement_id', $appart->id)
+                        ->whereYear('mois', $mois->year)
+                        ->whereMonth('mois', $mois->month)
+                        ->exists();
 
-            if (!$existe) {
-                Charge::create([
-                    'appartement_id' => $appart->id,
-                    'mois'           => $mois,
-                    'montant'        => $request->montant,
-                    'description'    => $request->description ?? 'Charges communes',
-                    'statut'         => 'impayée',
-                ]);
-                $count++;
-            }
+        if (!$existe) {
+            // ✅ Automatique: prix_charge dial appart, sinon montant saisi
+            $montant = $appart->prix_charge ?? $request->montant ?? 0;
+
+            Charge::create([
+                'appartement_id' => $appart->id,
+                'mois'           => $mois,
+                'montant'        => $montant,
+                'description'    => $request->description ?? 'Charges communes',
+                'statut'         => 'impayée',
+            ]);
+            $count++;
         }
-
-        return redirect()->route('charges.index')
-                         ->with('success', "{$count} charges générées pour " . $mois->format('m/Y') . " !");
     }
+
+    return redirect()->route('charges.index')
+                     ->with('success', "{$count} charges générées pour " . $mois->format('m/Y') . " !");
+}
 
     public static function mettreAJourStatuts()
     {

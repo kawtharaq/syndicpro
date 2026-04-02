@@ -4,7 +4,6 @@
 
 @section('content')
 
-{{-- Filtres --}}
 <form method="GET" action="{{ route('occupants.index') }}"
       class="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-4 items-end">
     <div>
@@ -30,7 +29,6 @@
        class="text-gray-400 hover:text-gray-600 text-sm py-2">Réinitialiser</a>
 </form>
 
-{{-- Header --}}
 <div class="flex justify-between items-center mb-4">
     <h3 class="text-lg font-semibold text-gray-700">
         Liste des occupants
@@ -42,55 +40,46 @@
     </a>
 </div>
 
-{{-- Table --}}
-<div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-sm">
+<div class="bg-white rounded-xl shadow overflow-x-auto">
+    <table class="min-w-full text-sm">
         <thead class="bg-gray-50 border-b">
             <tr>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Nom</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Type</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Appartement</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Immeuble</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Téléphone</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Date d'entrée</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Actions</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Nom</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Type</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Appartement</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Immeuble</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Téléphone</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Date entrée</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
             @forelse($occupants as $occupant)
             <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 font-semibold text-gray-800">{{ $occupant->nom }}</td>
-                <td class="px-6 py-4">
+                <td class="px-4 py-4 font-semibold text-gray-800">{{ $occupant->nom }}</td>
+                <td class="px-4 py-4">
                     @if($occupant->type === 'propriétaire')
-                        <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold">
-                            🏠 Propriétaire
-                        </span>
+                        <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-semibold">🏠 Proprio</span>
                     @else
-                        <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-semibold">
-                            🔑 Locataire
-                        </span>
+                        <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-semibold">🔑 Locataire</span>
                     @endif
                 </td>
-                <td class="px-6 py-4 text-gray-600">{{ $occupant->appartement->numero }}</td>
-                <td class="px-6 py-4 text-gray-600">{{ $occupant->appartement->immeuble->nom }}</td>
-                <td class="px-6 py-4 text-gray-600">{{ $occupant->telephone ?? '—' }}</td>
-                <td class="px-6 py-4 text-gray-400">
+                <td class="px-4 py-4 text-gray-600">{{ $occupant->appartement->numero }}</td>
+                <td class="px-4 py-4 text-gray-600 col-optional">{{ $occupant->appartement->immeuble->nom }}</td>
+                <td class="px-4 py-4 text-gray-600 col-optional">{{ $occupant->telephone ?? '—' }}</td>
+                <td class="px-4 py-4 text-gray-400 col-optional">
                     {{ $occupant->date_entree ? $occupant->date_entree->format('d/m/Y') : '—' }}
                 </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center gap-3">
+                <td class="px-4 py-4">
+                    <div class="flex items-center gap-2">
                         <a href="{{ route('occupants.show', $occupant) }}"
-                           class="text-blue-500 hover:text-blue-700" title="Voir">
-                            <i class="fas fa-eye"></i>
-                        </a>
+                           class="text-blue-500 hover:text-blue-700"><i class="fas fa-eye"></i></a>
                         <a href="{{ route('occupants.edit', $occupant) }}"
-                           class="text-yellow-500 hover:text-yellow-700" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
+                           class="text-yellow-500 hover:text-yellow-700"><i class="fas fa-edit"></i></a>
                         <form action="{{ route('occupants.destroy', $occupant) }}" method="POST"
-                              onsubmit="return confirm('Supprimer cet occupant ? L\'appartement sera libéré.')">
+                              onsubmit="return confirm('Supprimer cet occupant ?')">
                             @csrf @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700" title="Supprimer">
+                            <button type="submit" class="text-red-500 hover:text-red-700">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
@@ -107,9 +96,7 @@
             @endforelse
         </tbody>
     </table>
-    <div class="px-6 py-4 border-t">
-        {{ $occupants->links() }}
-    </div>
+    <div class="px-6 py-4 border-t">{{ $occupants->links() }}</div>
 </div>
 
 @endsection

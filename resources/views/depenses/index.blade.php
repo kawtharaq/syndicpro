@@ -4,10 +4,9 @@
 
 @section('content')
 
-{{-- Stats total + par catégorie --}}
 <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
     <div class="bg-white rounded-xl shadow p-5 border-l-4 border-orange-400 col-span-2 lg:col-span-1">
-        <p class="text-xs text-gray-400">Total dépenses (filtre actuel)</p>
+        <p class="text-xs text-gray-400">Total dépenses</p>
         <p class="text-2xl font-bold text-orange-600">{{ number_format($totalDepenses, 2) }} MAD</p>
     </div>
     @foreach($parCategorie as $cat)
@@ -18,7 +17,6 @@
     @endforeach
 </div>
 
-{{-- Filtres --}}
 <form method="GET" action="{{ route('depenses.index') }}"
       class="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-4 items-end">
     <div>
@@ -58,7 +56,6 @@
        class="text-gray-400 hover:text-gray-600 text-sm py-2">Réinitialiser</a>
 </form>
 
-{{-- Header --}}
 <div class="flex justify-between items-center mb-4">
     <h3 class="text-lg font-semibold text-gray-700">
         Liste des dépenses
@@ -70,25 +67,24 @@
     </a>
 </div>
 
-{{-- Table --}}
-<div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-sm">
+<div class="bg-white rounded-xl shadow overflow-x-auto">
+    <table class="min-w-full text-sm">
         <thead class="bg-gray-50 border-b">
             <tr>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Date</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Immeuble</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Catégorie</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Description</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Montant</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Actions</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Date</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Immeuble</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Catégorie</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Description</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Montant</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
             @forelse($depenses as $depense)
             <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 text-gray-600">{{ $depense->date->format('d/m/Y') }}</td>
-                <td class="px-6 py-4 font-semibold text-gray-800">{{ $depense->immeuble->nom }}</td>
-                <td class="px-6 py-4">
+                <td class="px-4 py-4 text-gray-600">{{ $depense->date->format('d/m/Y') }}</td>
+                <td class="px-4 py-4 font-semibold text-gray-800">{{ $depense->immeuble->nom }}</td>
+                <td class="px-4 py-4">
                     @php
                         $colors = [
                             'nettoyage'   => 'bg-blue-100 text-blue-700',
@@ -109,20 +105,14 @@
                         {{ $icons[$depense->categorie] ?? '' }} {{ ucfirst($depense->categorie) }}
                     </span>
                 </td>
-                <td class="px-6 py-4 text-gray-500">{{ $depense->description ?? '—' }}</td>
-                <td class="px-6 py-4 font-semibold text-orange-600">
-                    {{ number_format($depense->montant, 2) }} MAD
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center gap-3">
+                <td class="px-4 py-4 text-gray-500 col-optional">{{ $depense->description ?? '—' }}</td>
+                <td class="px-4 py-4 font-semibold text-orange-600">{{ number_format($depense->montant, 2) }} MAD</td>
+                <td class="px-4 py-4">
+                    <div class="flex items-center gap-2">
                         <a href="{{ route('depenses.show', $depense) }}"
-                           class="text-blue-500 hover:text-blue-700" title="Voir">
-                            <i class="fas fa-eye"></i>
-                        </a>
+                           class="text-blue-500 hover:text-blue-700"><i class="fas fa-eye"></i></a>
                         <a href="{{ route('depenses.edit', $depense) }}"
-                           class="text-yellow-500 hover:text-yellow-700" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
+                           class="text-yellow-500 hover:text-yellow-700"><i class="fas fa-edit"></i></a>
                         <form action="{{ route('depenses.destroy', $depense) }}" method="POST"
                               onsubmit="return confirm('Supprimer cette dépense ?')">
                             @csrf @method('DELETE')
@@ -143,9 +133,7 @@
             @endforelse
         </tbody>
     </table>
-    <div class="px-6 py-4 border-t">
-        {{ $depenses->links() }}
-    </div>
+    <div class="px-6 py-4 border-t">{{ $depenses->links() }}</div>
 </div>
 
 @endsection

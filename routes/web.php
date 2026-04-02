@@ -9,6 +9,8 @@ use App\Http\Controllers\ChargeController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\DepenseController;
 use App\Http\Controllers\RapportController;
+use App\Http\Controllers\AnalytiqueController;
+use App\Http\Controllers\SuiviPaiementController;
 
 Route::get('/', fn() => redirect()->route('login'));
 
@@ -24,6 +26,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('depenses', DepenseController::class);
     Route::get('/rapports', [RapportController::class, 'index'])->name('rapports.index');
     Route::get('/rapports/pdf', [RapportController::class, 'exportPdf'])->name('rapports.pdf');
+    Route::get('/analytique', [AnalytiqueController::class, 'index'])->name('analytique.index');
+    Route::get('/analytique', [AnalytiqueController::class, 'index'])->name('analytique.index');
+    Route::get('/suivi-paiements', [SuiviPaiementController::class, 'index'])->name('suivi.index');
+    Route::post('/suivi-paiements/{charge}/payer', [SuiviPaiementController::class, 'payer'])->name('suivi.payer');
 });
 
 require __DIR__.'/auth.php';

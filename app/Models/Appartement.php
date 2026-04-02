@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Appartement extends Model
 {
-    protected $fillable = ['immeuble_id', 'numero', 'etage', 'superficie', 'statut'];
+    protected $fillable = [
+        'immeuble_id', 'numero', 'etage', 'superficie',
+        'description', 'prix_charge', 'charges_payees', 'statut'
+    ];
+
+    protected $casts = [
+        'charges_payees' => 'boolean',
+    ];
 
     public function immeuble()
     {

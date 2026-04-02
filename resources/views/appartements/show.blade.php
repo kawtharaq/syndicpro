@@ -40,6 +40,23 @@
             <p class="text-sm text-gray-500">Charges impayées</p>
         </div>
     </div>
+
+    {{-- Description --}}
+    @if($appartement->description)
+    <div class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <p class="text-xs text-gray-400 mb-1"><i class="fas fa-info-circle mr-1"></i>Description</p>
+        <p class="text-gray-700">{{ $appartement->description }}</p>
+    </div>
+    @endif
+
+    {{-- Prix charge --}}
+    @if($appartement->prix_charge)
+    <div class="mt-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+        <p class="text-xs text-gray-400 mb-1"><i class="fas fa-money-bill mr-1"></i>Prix charge mensuel</p>
+        <p class="text-yellow-700 font-bold text-lg">{{ number_format($appartement->prix_charge, 2) }} MAD</p>
+    </div>
+    @endif
+
 </div>
 
 {{-- Occupant actuel --}}
@@ -71,7 +88,9 @@
 {{-- Historique charges --}}
 <div class="bg-white rounded-xl shadow overflow-hidden">
     <div class="px-6 py-4 border-b">
-        <h4 class="font-semibold text-gray-700"><i class="fas fa-file-invoice-dollar mr-2 text-yellow-500"></i>Historique des charges</h4>
+        <h4 class="font-semibold text-gray-700">
+            <i class="fas fa-file-invoice-dollar mr-2 text-yellow-500"></i>Historique des charges
+        </h4>
     </div>
     <table class="w-full text-sm">
         <thead class="bg-gray-50">
@@ -99,7 +118,9 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="4" class="px-6 py-6 text-center text-gray-400">Aucune charge enregistrée.</td></tr>
+            <tr>
+                <td colspan="4" class="px-6 py-6 text-center text-gray-400">Aucune charge enregistrée.</td>
+            </tr>
             @endforelse
         </tbody>
     </table>

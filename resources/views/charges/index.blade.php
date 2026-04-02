@@ -4,7 +4,6 @@
 
 @section('content')
 
-{{-- Génération automatique --}}
 <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
     <h4 class="font-semibold text-blue-800 mb-3">
         <i class="fas fa-magic mr-2"></i>Générer les charges du mois
@@ -14,12 +13,12 @@
           onsubmit="return confirm('Générer les charges pour tous les appartements occupés ?')">
         @csrf
         <div>
-            <label class="block text-xs text-blue-700 mb-1">Mois <span class="text-red-500">*</span></label>
+            <label class="block text-xs text-blue-700 mb-1">Mois</label>
             <input type="month" name="mois" value="{{ date('Y-m') }}"
                    class="border border-blue-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
         <div>
-            <label class="block text-xs text-blue-700 mb-1">Montant par appart. (MAD) <span class="text-red-500">*</span></label>
+            <label class="block text-xs text-blue-700 mb-1">Montant par appart. (MAD)</label>
             <input type="number" name="montant" placeholder="Ex: 300" min="0" step="0.01"
                    class="border border-blue-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
         </div>
@@ -35,10 +34,9 @@
     </form>
 </div>
 
-{{-- Stats --}}
 <div class="grid grid-cols-3 gap-4 mb-6">
     <div class="bg-white rounded-xl shadow p-4 border-l-4 border-yellow-400">
-        <p class="text-xs text-gray-400">Total charges filtrées</p>
+        <p class="text-xs text-gray-400">Total charges</p>
         <p class="text-2xl font-bold text-yellow-600">{{ number_format($totalCharges, 2) }} MAD</p>
     </div>
     <div class="bg-white rounded-xl shadow p-4 border-l-4 border-green-400">
@@ -51,7 +49,6 @@
     </div>
 </div>
 
-{{-- Filtres --}}
 <form method="GET" action="{{ route('charges.index') }}"
       class="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-4 items-end">
     <div>
@@ -77,7 +74,6 @@
        class="text-gray-400 hover:text-gray-600 text-sm py-2">Réinitialiser</a>
 </form>
 
-{{-- Header --}}
 <div class="flex justify-between items-center mb-4">
     <h3 class="text-lg font-semibold text-gray-700">
         Liste des charges
@@ -89,58 +85,52 @@
     </a>
 </div>
 
-{{-- Table --}}
-<div class="bg-white rounded-xl shadow overflow-hidden">
-    <table class="w-full text-sm">
+<div class="bg-white rounded-xl shadow overflow-x-auto">
+    <table class="min-w-full text-sm">
         <thead class="bg-gray-50 border-b">
             <tr>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Appartement</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Immeuble</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Mois</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Montant</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Description</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Statut</th>
-                <th class="text-left px-6 py-3 text-gray-500 font-medium">Actions</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Appartement</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Immeuble</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Mois</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Montant</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Description</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Statut</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
             @forelse($charges as $charge)
             <tr class="hover:bg-gray-50 transition">
-                <td class="px-6 py-4 font-semibold text-gray-800">{{ $charge->appartement->numero }}</td>
-                <td class="px-6 py-4 text-gray-600">{{ $charge->appartement->immeuble->nom }}</td>
-                <td class="px-6 py-4 text-gray-600">{{ $charge->mois->format('m/Y') }}</td>
-                <td class="px-6 py-4 font-semibold text-gray-800">{{ number_format($charge->montant, 2) }} MAD</td>
-                <td class="px-6 py-4 text-gray-500">{{ $charge->description ?? '—' }}</td>
-                <td class="px-6 py-4">
+                <td class="px-4 py-4 font-semibold text-gray-800">{{ $charge->appartement->numero }}</td>
+                <td class="px-4 py-4 text-gray-600 col-optional">{{ $charge->appartement->immeuble->nom }}</td>
+                <td class="px-4 py-4 text-gray-600">{{ $charge->mois->format('m/Y') }}</td>
+                <td class="px-4 py-4 font-semibold text-gray-800">{{ number_format($charge->montant, 2) }} MAD</td>
+                <td class="px-4 py-4 text-gray-500 col-optional">{{ $charge->description ?? '—' }}</td>
+                <td class="px-4 py-4">
                     @if($charge->statut === 'payée')
                         <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-semibold">✓ Payée</span>
                     @elseif($charge->statut === 'en retard')
-                        <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold">⚠ En retard</span>
+                        <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-semibold">⚠ Retard</span>
                     @else
                         <span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">⏳ Impayée</span>
                     @endif
                 </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center gap-3">
+                <td class="px-4 py-4">
+                    <div class="flex items-center gap-2">
                         <a href="{{ route('charges.show', $charge) }}"
-                           class="text-blue-500 hover:text-blue-700" title="Voir">
-                            <i class="fas fa-eye"></i>
-                        </a>
+                           class="text-blue-500 hover:text-blue-700"><i class="fas fa-eye"></i></a>
                         <a href="{{ route('charges.edit', $charge) }}"
-                           class="text-yellow-500 hover:text-yellow-700" title="Modifier">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        {{-- Bouton rapide Marquer payée --}}
+                           class="text-yellow-500 hover:text-yellow-700"><i class="fas fa-edit"></i></a>
                         @if($charge->statut !== 'payée')
                         <a href="{{ route('paiements.create') }}?charge_id={{ $charge->id }}"
-                           class="text-green-500 hover:text-green-700" title="Enregistrer paiement">
+                           class="text-green-500 hover:text-green-700" title="Paiement">
                             <i class="fas fa-check-circle"></i>
                         </a>
                         @endif
                         <form action="{{ route('charges.destroy', $charge) }}" method="POST"
                               onsubmit="return confirm('Supprimer cette charge ?')">
                             @csrf @method('DELETE')
-                            <button type="submit" class="text-red-500 hover:text-red-700" title="Supprimer">
+                            <button type="submit" class="text-red-500 hover:text-red-700">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </form>
@@ -157,9 +147,7 @@
             @endforelse
         </tbody>
     </table>
-    <div class="px-6 py-4 border-t">
-        {{ $charges->links() }}
-    </div>
+    <div class="px-6 py-4 border-t">{{ $charges->links() }}</div>
 </div>
 
 @endsection

@@ -51,7 +51,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
     {{-- Derniers Paiements --}}
-    <div class="bg-white rounded-xl shadow p-6">
+    <div class="bg-white rounded-xl shadow p-6 overflow-x-auto">
         <h3 class="text-lg font-semibold text-gray-700 mb-4">
             <i class="fas fa-money-bill-wave text-green-500 mr-2"></i>Derniers paiements
         </h3>
@@ -61,7 +61,7 @@
                     <th class="text-left px-3 py-2 text-gray-500">Occupant</th>
                     <th class="text-left px-3 py-2 text-gray-500">Appart.</th>
                     <th class="text-left px-3 py-2 text-gray-500">Montant</th>
-                    <th class="text-left px-3 py-2 text-gray-500">Date</th>
+                    <th class="text-left px-3 py-2 text-gray-500 col-optional">Date</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
@@ -70,7 +70,7 @@
                     <td class="px-3 py-2">{{ $p->occupant->nom ?? '—' }}</td>
                     <td class="px-3 py-2">{{ $p->charge->appartement->numero ?? '—' }}</td>
                     <td class="px-3 py-2 font-semibold text-green-600">{{ number_format($p->montant, 2) }} MAD</td>
-                    <td class="px-3 py-2 text-gray-400">{{ $p->date_paiement->format('d/m/Y') }}</td>
+                    <td class="px-3 py-2 text-gray-400 col-optional">{{ $p->date_paiement->format('d/m/Y') }}</td>
                 </tr>
                 @empty
                 <tr><td colspan="4" class="px-3 py-4 text-center text-gray-400">Aucun paiement ce mois</td></tr>
@@ -80,7 +80,7 @@
     </div>
 
     {{-- Occupants en retard --}}
-    <div class="bg-white rounded-xl shadow p-6">
+    <div class="bg-white rounded-xl shadow p-6 overflow-x-auto">
         <h3 class="text-lg font-semibold text-gray-700 mb-4">
             <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>Impayés en retard
         </h3>
@@ -100,9 +100,11 @@
                     <td class="px-3 py-2 font-semibold text-red-600">{{ number_format($c->montant, 2) }} MAD</td>
                 </tr>
                 @empty
-                <tr><td colspan="3" class="px-3 py-4 text-center text-gray-400">
-                    <i class="fas fa-check-circle text-green-400"></i> Aucun retard 🎉
-                </td></tr>
+                <tr>
+                    <td colspan="3" class="px-3 py-4 text-center text-gray-400">
+                        <i class="fas fa-check-circle text-green-400"></i> Aucun retard 🎉
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
