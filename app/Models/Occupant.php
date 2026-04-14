@@ -8,6 +8,8 @@ class Occupant extends Model
 {
     protected $fillable = ['appartement_id', 'nom', 'telephone', 'email', 'type', 'date_entree'];
 
+    protected $casts = ['date_entree' => 'date'];
+
     public function appartement()
     {
         return $this->belongsTo(Appartement::class);

@@ -1,51 +1,108 @@
 @extends('layouts.app')
 @section('title', 'Paiements')
+@section('breadcrumb', 'Accueil / Paiements')
 
 @section('content')
 
 <div class="grid grid-cols-2 gap-4 mb-6">
-    <div class="bg-white p-4 rounded shadow">
-        <p>Total encaissé</p>
-        <p class="text-green-600 font-bold text-xl">
-            {{ number_format($totalEncaisse, 2) }} MAD
-        </p>
+    <div class="bg-white rounded-xl shadow p-5 border-l-4 border-green-400">
+        <p class="text-xs text-gray-400">Total encaissé</p>
+        <p class="text-2xl font-bold text-green-600">{{ number_format($totalEncaisse, 2) }} MAD</p>
     </div>
-
-    <div class="bg-white p-4 rounded shadow">
-        <p>Nombre paiements</p>
-        <p class="text-blue-600 font-bold text-xl">
-            {{ $paiements->total() }}
-        </p>
+    <div class="bg-white rounded-xl shadow p-5 border-l-4 border-blue-400">
+        <p class="text-xs text-gray-400">Nombre de paiements</p>
+        <p class="text-2xl font-bold text-blue-600">{{ $paiements->total() }}</p>
     </div>
 </div>
 
-<a href="{{ route('paiements.create') }}"
-   class="bg-green-600 text-white px-4 py-2 rounded">
-   Nouveau paiement
-</a>
+<form method="GET" action="{{ route('paiements.index') }}"
+      class="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-4 items-end">
+    <div>
+        <label class="block text-xs text-gray-500 mb-1">Mois</label>
+        <input type="month" name="mois" value="{{ request('mois') }}"
+               class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+    </div>
+    <div>
+        <label class="block text-xs text-gray-500 mb-1">Recherche occupant</label>
+        <input type="text" name="search" value="{{ request('search') }}"
+               placeholder="Nom..."
+               class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+    </div>
+    <button type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition">
+        <i class="fas fa-filter mr-1"></i> Filtrer
+    </button>
+    <a href="{{ route('paiements.index') }}"
+       class="text-gray-400 hover:text-gray-600 text-sm py-2">Réinitialiser</a>
+</form>
 
-<table class="w-full mt-4 bg-white shadow rounded">
-    <thead>
-        <tr>
-            <th>Occupant</th>
-            <th>Appartement</th>
-            <th>Montant</th>
-            <th>Date</th>
-        </tr>
-    </thead>
+<div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-semibold text-gray-700">
+        Historique des paiements
+        <span class="text-sm font-normal text-gray-400">({{ $paiements->total() }} au total)</span>
+    </h3>
+    <a href="{{ route('paiements.create') }}"
+       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+        <i class="fas fa-plus"></i> Enregistrer un paiement
+    </a>
+</div>
 
-    <tbody>
-        @foreach($paiements as $p)
-        <tr>
-            <td>{{ $p->occupant->nom }}</td>
-            <td>{{ $p->charge->appartement->numero }}</td>
-            <td>{{ $p->montant }}</td>
-            <td>{{ $p->date_paiement }}</td>
-        </tr>
-        @endforeach
-    </tbody>
-</table>
-
-{{ $paiements->links() }}
+<div class="bg-white rounded-xl shadow overflow-x-auto">
+    <table class="min-w-full text-sm">
+        <thead class="bg-gray-50 border-b">
+            <tr>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Occupant</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Appartement</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Immeuble</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Mois</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Montant</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Mode</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium col-optional">Date</th>
+                <th class="text-left px-4 py-3 text-gray-500 font-medium">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+            @forelse($paiements as $paiement)
+            <tr class="hover:bg-gray-50 transition">
+                <td class="px-4 py-4 font-semibold text-gray-800">{{ $paiement->occupant->nom }}</td>
+                <td class="px-4 py-4 text-gray-600 col-optional">{{ $paiement->charge->appartement->numero }}</td>
+                <td class="px-4 py-4 text-gray-600 col-optional">{{ $paiement->charge->appartement->immeuble->nom }}</td>
+                <td class="px-4 py-4 text-gray-600">{{ $paiement->charge->mois->format('m/Y') }}</td>
+                <td class="px-4 py-4 font-semibold text-green-600">{{ number_format($paiement->montant, 2) }} MAD</td>
+                <td class="px-4 py-4 col-optional">
+                    @if($paiement->mode)
+                        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs">{{ ucfirst($paiement->mode) }}</span>
+                    @else —
+                    @endif
+                </td>
+                <td class="px-4 py-4 text-gray-500 col-optional">{{ $paiement->date_paiement->format('d/m/Y') }}</td>
+                <td class="px-4 py-4">
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('paiements.show', $paiement) }}"
+                           class="text-blue-500 hover:text-blue-700"><i class="fas fa-eye"></i></a>
+                        <a href="{{ route('paiements.edit', $paiement) }}"
+                           class="text-yellow-500 hover:text-yellow-700"><i class="fas fa-edit"></i></a>
+                        <form action="{{ route('paiements.destroy', $paiement) }}" method="POST"
+                              onsubmit="return confirm('Supprimer ce paiement ?')">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="8" class="px-6 py-8 text-center text-gray-400">
+                    <i class="fas fa-money-bill-wave text-4xl mb-2 block"></i>
+                    Aucun paiement trouvé.
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+    <div class="px-6 py-4 border-t">{{ $paiements->links() }}</div>
+</div>
 
 @endsection

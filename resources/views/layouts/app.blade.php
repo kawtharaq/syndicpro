@@ -42,10 +42,13 @@
                class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-700 transition {{ request()->routeIs('charges.*') ? 'bg-blue-700' : '' }}">
                 <i class="fas fa-file-invoice-dollar w-5"></i> Charges
                 @php
-                 $impayesCount = \App\Models\Charge::where('date_echeance', '<', now())
-                 ->where('statut', '!=', 'payée')
-                 ->count();
-                  @endphp
+                 $impayesCount = \App\Models\Charge::where('statut', '!=', 'payée')->count();
+                @endphp
+                @if($impayesCount > 0)
+                    <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        {{ $impayesCount }}
+                    </span>
+                @endif
             </a>
             <a href="{{ route('paiements.index') }}" 
                class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-blue-700 transition {{ request()->routeIs('paiements.*') ? 'bg-blue-700' : '' }}">

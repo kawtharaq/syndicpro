@@ -60,6 +60,12 @@ class PaiementController extends Controller
             ->with('success', 'Paiement modifié');
     }
 
+    public function show(Paiement $paiement)
+    {
+        $paiement->load('charge.appartement.immeuble', 'occupant');
+        return view('paiements.show', compact('paiement'));
+    }
+
     public function destroy(Paiement $paiement)
     {
         $charge = $paiement->charge;
@@ -71,23 +77,17 @@ class PaiementController extends Controller
             ->with('success', 'Paiement supprimé');
     }
 
-   
     private function updateChargeStatus($charge)
     {
         $total = $charge->paiements()->sum('montant');
-        $days  = $charge->created_at->diffInDays(now());
+        $days  = $charge->mois->diffInDays(now());
 
         if ($total >= $charge->montant) {
             $charge->update(['statut' => 'payée']);
             return;
         }
 
-        if ($days >= 15) {
-            $charge->update(['statut' => 'impayée']);
-            return;
-        }
-
-        if ($days >= 7) {
+        if ($days >= 30) {
             $charge->update(['statut' => 'en retard']);
             return;
         }

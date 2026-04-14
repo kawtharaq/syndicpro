@@ -25,10 +25,7 @@ class OccupantController extends Controller
 
     public function create(Request $request)
     {
-        // Seulement les appartements vacants
-        $appartements = Appartement::where('statut', 'vacant')
-                                    ->with('immeuble')
-                                    ->get();
+        $appartements = Appartement::with('immeuble')->get();
         $selectedAppartement = $request->appartement_id;
         return view('occupants.create', compact('appartements', 'selectedAppartement'));
     }
